@@ -7,6 +7,7 @@ fi
 
 DATE=$(date '+%Y%m%d')
 TMP_DIR=$(mktemp -d)
+CUR_HOSTNAME=$(hostname)
 GIT_LOC="https://github.com/krislamo/bootstrap.git"
 
 echo "Enter name server's new hostname:"
@@ -29,6 +30,6 @@ apt-get install openssh-server -y
 
 hostnamectl set-hostname $NEW_HOSTNAME
 cp /etc/hosts /etc/hosts.$DATE
-sed -i "s/test/$NEW_HOSTNAME/g" /etc/hosts
+sed -i "s/$CUR_HOSTNAME/$NEW_HOSTNAME/g" /etc/hosts
 read -p "Press [enter] to restart this machine"
 /sbin/shutdown -r now
