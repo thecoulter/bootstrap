@@ -31,4 +31,4 @@ hostnamectl set-hostname $NEW_HOSTNAME
 cp /etc/hosts /etc/hosts.$DATE
 sed -i "s/test/$NEW_HOSTNAME/g" /etc/hosts
 read -p "Press [enter] to restart this machine"
-/sbin/shutdown -r now
+systemctl reboot
