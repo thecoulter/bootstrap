@@ -13,6 +13,9 @@ GIT_LOC="https://github.com/krislamo/bootstrap.git"
 echo "Enter name server's new hostname:"
 read NEW_HOSTNAME
 
+echo "Enter a static IP address (e.g. 192.168.1.2/24):"
+read STATIC_IP
+
 cp /etc/apt/sources.list /etc/apt/sources.list.$DATE
 sed -i '/deb cdrom/d' /etc/apt/sources.list
 
@@ -27,6 +30,16 @@ cd bootstrap
 mkdir -p /root/.ssh/
 cp --update authorized_keys /root/.ssh/authorized_keys
 apt-get install openssh-server -y
+
+# If STATIC_IP var was set, backup interfaces and set static IP
+if [ ! -z "$STATIC_IP" ]; then
+  cp /etc/network/interfaces /etc/network/interfaces.$DATE
+  sed -i "s/dhcp/static/g" /etc/network/interfaces
+  if ! grep -q "address" /etc/network/interfaces; then
+    echo "  address $STATIC_IP" >> /etc/network/interfaces
+    echo "  gateway 192.168.1.1" >> /etc/network/interfaces
+  fi
+fi
 
 hostnamectl set-hostname $NEW_HOSTNAME
 cp /etc/hosts /etc/hosts.$DATE
