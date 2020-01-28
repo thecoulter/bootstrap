@@ -16,6 +16,14 @@ read NEW_HOSTNAME
 echo "Enter a static IP address (e.g. 192.168.1.2/24):"
 read STATIC_IP
 
+if [ ! -z "$STATIC_IP" ]; then
+  echo "Enter the gateway IP (default: 192.168.1.1):"
+  read GATEWAY_IP
+
+  [ -z "$GATEWAY_IP" ] && GATEWAY_IP="192.168.1.1"
+  echo "Gateway set to $GATEWAY_IP"
+fi
+
 cp /etc/apt/sources.list /etc/apt/sources.list.$DATE
 sed -i '/deb cdrom/d' /etc/apt/sources.list
 
@@ -37,7 +45,7 @@ if [ ! -z "$STATIC_IP" ]; then
   sed -i "s/dhcp/static/g" /etc/network/interfaces
   if ! grep -q "address" /etc/network/interfaces; then
     echo "  address $STATIC_IP" >> /etc/network/interfaces
-    echo "  gateway 192.168.1.1" >> /etc/network/interfaces
+    echo "  gateway $GATEWAY_IP" >> /etc/network/interfaces
   fi
 fi
 
