@@ -63,5 +63,5 @@ if [ ! -z "$NEW_HOSTNAME" ]; then
   cp /etc/hosts /etc/hosts.$DATE
   sed -i "s/$CUR_HOSTNAME/$NEW_HOSTNAME/g" /etc/hosts
   read -p "Press [enter] to restart this machine"
-  /sbin/shutdown -r now
+  systemctl reboot
 fi
