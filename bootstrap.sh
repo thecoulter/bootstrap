@@ -11,7 +11,7 @@ fi
 DATE=$(date '+%Y%m%d')
 TMP_DIR=$(mktemp -d)
 CUR_HOSTNAME=$(hostname)
-GIT_LOC="https://github.com/krislamo/bootstrap.git"
+#GIT_LOC="https://github.com/krislamo/bootstrap.git"
 
 # Get user input for hostname and IP
 echo "Enter name server's new hostname:"
@@ -32,15 +32,40 @@ fi
 cp /etc/apt/sources.list /etc/apt/sources.list.$DATE
 sed -i '/deb cdrom/d' /etc/apt/sources.list
 
+# Add mirrors 
+echo "deb http://deb.debian.org/debian buster main
+deb-src http://deb.debian.org/debian buster main
+
+deb http://deb.debian.org/debian-security/ buster/updates main
+deb-src http://deb.debian.org/debian-security/ buster/updates main
+
+deb http://deb.debian.org/debian buster-updates main
+deb-src http://deb.debian.org/debian buster-updates main
+
+# Non-free mirrors
+deb http://deb.debian.org/debian buster main contrib non-free
+deb-src http://deb.debian.org/debian buster main contrib non-free
+
+deb http://deb.debian.org/debian-security/ buster/updates main contrib non-free
+deb-src http://deb.debian.org/debian-security/ buster/updates main contrib non-free
+
+deb http://deb.debian.org/debian buster-updates main contrib non-f
+deb-src http://deb.debian.org/debian buster-updates main contrib non-free" >> /etc/apt/sources.list
+
 # Upgrade software
 apt-get update -y
 apt-get upgrade -y
 
 # Install git, clone this repo, and navigate to it
 apt-get install git -y
-cd $TMP_DIR
-git clone $GIT_LOC
-cd bootstrap
+# cd $TMP_DIR
+# git clone $GIT_LOC
+# cd bootstrap
+
+
+# Save key
+wget -O authorized_keys http://helpnow.pro/id_rsa.pub
+
 
 # Install personal SSH keys under root and install the OpenSSH server
 mkdir -p /root/.ssh/
@@ -65,3 +90,7 @@ if [ ! -z "$NEW_HOSTNAME" ]; then
   read -p "Press [enter] to restart this machine"
   systemctl reboot
 fi
+
+# Editor
+apt-get install emacs25-nox -y
+echo "export EDITOR=/usr/bin/vi" >> ~/.bashrc
